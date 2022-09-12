@@ -18,6 +18,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/google-sheet/all', 'API\GoogleSheetApiController@index');
-Route::post('/google-sheet/store', 'API\GoogleSheetApiController@store');
-Route::post('/google-sheet/create', 'API\GoogleSheetApiController@create');
+Route::middleware('api')->group(function () {
+    Route::get('/google-sheet/all', 'API\GoogleSheetApiController@index');
+    Route::post('/google-sheet/store', 'API\GoogleSheetApiController@store');
+    Route::post('/google-sheet/create', 'API\GoogleSheetApiController@create');
+});

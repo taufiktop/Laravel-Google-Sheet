@@ -15,7 +15,7 @@ class GoogleSheetController extends Controller
     public function index()
     {
         Sheets::spreadsheet(config('sheets.spreadsheet_id'));
-        $sheets = Sheets::sheet('sheetTitle');
+        $sheets = Sheets::sheet('Detail Unit');
         $header = $sheets->get()->pull(0);
 
         // Append row data
@@ -32,13 +32,13 @@ class GoogleSheetController extends Controller
         $rows = $sheets->get()->toArray();
         $rows = array_slice($rows, 1);
         $data = Sheets::collection($header, $rows);
-        return response()->json(array(
-            'OUT_STAT' => 'T',
-            'OUT_MESS' => 'Success',
-            'OUT_DATA' => $data
-        ), 200);
+        // return response()->json(array(
+        //     'OUT_STAT' => 'T',
+        //     'OUT_MESS' => 'Success',
+        //     'OUT_DATA' => $data
+        // ), 200);
 
-        // return view('detail',['data' => $data]);
+        return view('detail',['data' => $data]);
     }
 
     /**

@@ -15,10 +15,10 @@ class GoogleSheetApiController extends Controller
      */
     public function index()
     {
-        Sheets::spreadsheet(config('sheets.spreadsheet_id'));
-        $sheets = Sheets::sheet('Detail Unit');
-
         try {
+            Sheets::spreadsheet(config('sheets.spreadsheet_id'));
+            $sheets = Sheets::sheet('Detail Unit');
+    
             $all = $sheets->get();
             $header = $all->pull(0);
             $rows = array_slice($all->toArray(), 0);
@@ -45,10 +45,10 @@ class GoogleSheetApiController extends Controller
      */
     public function create(Request $req)
     {
-        Sheets::spreadsheet(config('sheets.spreadsheet_id'));
-        $sheets = Sheets::sheet('Detail Unit');
-
-        try {
+         try {
+            Sheets::spreadsheet(config('sheets.spreadsheet_id'));
+            $sheets = Sheets::sheet('Detail Unit');
+       
             $all = $sheets->get();
             $nData = count($all);
             $header = $all->pull(0);
@@ -84,19 +84,27 @@ class GoogleSheetApiController extends Controller
      */
     public function store(Request $req)
     {
-        Sheets::spreadsheet(config('sheets.spreadsheet_id'));
-        $sheets = Sheets::sheet('Detail Unit');
-        $header = $sheets->get()->pull(0);
+        try {
+            Sheets::spreadsheet(config('sheets.spreadsheet_id'));
+            $sheets = Sheets::sheet('Detail Unit');
 
-        $rows = $sheets->get()->toArray();
-        $rows = array_slice($rows, $req->id, 1);
-        $data = Sheets::collection($header, $rows);
+            $header = $sheets->get()->pull(0);
+            $rows = $sheets->get()->toArray();
+            $rows = array_slice($rows, $req->id, 1);
+            $data = Sheets::collection($header, $rows);
+            
+            return response()->json(array(
+                'OUT_STAT' => 'T',
+                'OUT_MESS' => 'Success',
+                'OUT_DATA' => $data
+            ), 200);
+        } catch (\Throwable $th) {
+            return response()->json(array(
+                'OUT_STAT' => 'F',
+                'OUT_MESS' => 'Failed'
+            ), 500);
+        }
         
-        return response()->json(array(
-            'OUT_STAT' => 'T',
-            'OUT_MESS' => 'Success',
-            'OUT_DATA' => $data
-        ), 200);
     }
 
     /**
