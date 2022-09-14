@@ -46,6 +46,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\AuthApiGoogleSheet::class,
             \App\Http\Middleware\JsonResponseApi::class,
         ],
+
     ];
 
     /**
@@ -65,5 +66,6 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'jwt.verify' => \App\Http\Middleware\JwtMiddleware::class,
     ];
 }

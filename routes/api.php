@@ -14,12 +14,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
 Route::middleware('api')->group(function () {
-    Route::get('/google-sheet/all', 'API\GoogleSheetApiController@index');
-    Route::post('/google-sheet/store', 'API\GoogleSheetApiController@store');
-    Route::post('/google-sheet/create', 'API\GoogleSheetApiController@create');
+    Route::post('/login', 'API\AuthController@login')->name('login');
+    Route::middleware('jwt.verify')->group(function() {
+        Route::get('/user-info', 'API\AuthController@me');
+        Route::post('/logout', 'API\AuthController@logout');
+        Route::get('/google-sheet/all', 'API\GoogleSheetApiController@index');
+        Route::post('/google-sheet/store', 'API\GoogleSheetApiController@store');
+        Route::post('/google-sheet/create', 'API\GoogleSheetApiController@create');
+    });
+    
+    
 });

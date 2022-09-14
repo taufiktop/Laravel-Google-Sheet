@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Revolution\Google\Sheets\Facades\Sheets;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class GoogleSheetApiController extends Controller
 {
@@ -13,7 +15,7 @@ class GoogleSheetApiController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $req)
     {
         try {
             Sheets::spreadsheet(config('sheets.spreadsheet_id'));
@@ -23,6 +25,14 @@ class GoogleSheetApiController extends Controller
             $header = $all->pull(0);
             $rows = array_slice($all->toArray(), 0);
             $data = Sheets::collection($header, $rows);
+
+            //add activity to db
+            $token = explode(" ", $req->header('Authorization'))[1];
+            DB::table('activity_goosheet')->insertGetId([
+                'activity' => 'Get all data',
+                'remember_token' => $token,
+                'created_at' => Carbon::now('Asia/Jakarta')
+            ]);
 
             return response()->json(array(
                 'OUT_STAT' => 'T',
@@ -63,6 +73,14 @@ class GoogleSheetApiController extends Controller
             ];
             $sheets->append([$data]);
 
+            //add activity to db
+            $token = explode(" ", $req->header('Authorization'))[1];
+            DB::table('activity_goosheet')->insertGetId([
+                'activity' => 'Append new data',
+                'remember_token' => $token,
+                'created_at' => Carbon::now('Asia/Jakarta')
+            ]);
+
             return response()->json(array(
                 'OUT_STAT' => 'T',
                 'OUT_MESS' => 'Success'
@@ -92,6 +110,14 @@ class GoogleSheetApiController extends Controller
             $rows = $sheets->get()->toArray();
             $rows = array_slice($rows, $req->id, 1);
             $data = Sheets::collection($header, $rows);
+
+            //add activity to db
+            $token = explode(" ", $req->header('Authorization'))[1];
+            DB::table('activity_goosheet')->insertGetId([
+                'activity' => 'Get single data',
+                'remember_token' => $token,
+                'created_at' => Carbon::now('Asia/Jakarta')
+            ]);
             
             return response()->json(array(
                 'OUT_STAT' => 'T',
@@ -104,7 +130,7 @@ class GoogleSheetApiController extends Controller
                 'OUT_MESS' => 'Failed'
             ), 500);
         }
-        
+
     }
 
     /**
